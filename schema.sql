@@ -1,8 +1,9 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TABLE IF NOT EXISTS credential (
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    password_hash text NOT NULL
+    credential_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    password_hash text NOT NULL,
+    active bool DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS crate (

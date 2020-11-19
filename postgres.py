@@ -1,7 +1,9 @@
 import psycopg2
 import psycopg2.extras
 import os
+import secrets
 
+from argon2 import PasswordHasher
 from uuid import UUID
 
 
@@ -124,6 +126,32 @@ def select(query, data=None, real_dict_cursor=False):
     # Close the DB connection and return the rows
     db.close()
     return rows
+
+
+def create_api_key():
+    """Creates a new API key and returns it to the user."""
+    # Create a new secret and hash it
+    pass_hasher = PasswordHasher()
+    secret = secrets.token_urlsafe(64)
+    hash = pass_hasher.hash(secret)
+
+    # verify the secret
+    if not pass_hasher.verify(hash, secret):
+        return False
+
+    if pass_hasher.check_needs_rehash(hash):
+        return False
+
+    # insert the secret into the DB
+    query = "INSERT INTO credential (password_hash) VALUES (%s) RETURNING credential_id"
+    data = (secret,)
+
+    credential_id = insert(query, data, return_inserted_row_id=True)
+
+    if not credential_id:
+        return False
+
+    return {'credential_id': credential_id, 'secret': secret}
 
 
 def create_crate(crate_name):

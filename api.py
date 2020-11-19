@@ -19,6 +19,17 @@ def hello_world():
     return 'Hello World!'
 
 
+@app.route('/api/key')
+def new_api_key():
+    """Get a new API key"""
+    credentials = postgres.create_api_key()
+
+    if not credentials:
+        message = {"message": "Something went wrong getting an API key"}
+        return message, 500
+
+    return credentials, 200
+
 @app.route('/add/song', methods=['POST'])
 def add_song():
     """Add a song to the database"""
