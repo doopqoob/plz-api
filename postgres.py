@@ -144,7 +144,7 @@ def create_api_key():
 
     # insert the secret into the DB
     query = "INSERT INTO credential (password_hash) VALUES (%s) RETURNING credential_id"
-    data = (secret,)
+    data = (hash,)
 
     credential_id = insert(query, data, return_inserted_row_id=True)
 
