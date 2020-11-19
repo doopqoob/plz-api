@@ -6,12 +6,12 @@ CREATE TABLE IF NOT EXISTS credential (
 );
 
 CREATE TABLE IF NOT EXISTS crate (
-    crate_id int NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    crate_id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     crate_name text UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS show (
-    show_id int NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    show_id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     show_name text UNIQUE NOT NULL
 );
 
@@ -53,16 +53,14 @@ CREATE TABLE IF NOT EXISTS selected_request (
 CREATE VIEW request AS
     SELECT ticket_id,
            'freeform' as type,
-           null,
            artist,
            title,
-           null,
-           null
+           null as tempo,
+           null as key
     FROM freeform_request
 UNION
     SELECT ticket_id,
            'selected' as type,
-           selected_request.song_id,
            artist,
            title,
            tempo,
