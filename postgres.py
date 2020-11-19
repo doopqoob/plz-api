@@ -128,7 +128,7 @@ def select(query, data=None, real_dict_cursor=False):
 
 def create_crate(crate_name):
     """Creates a new crate in which to file songs"""
-    query = "INSERT INTO crate (crate_name) VALUES (?) RETURNING crate_id"
+    query = "INSERT INTO crate (crate_name) VALUES (%s) RETURNING crate_id"
     data = (crate_name,)
     crate_id = insert(query, data, return_inserted_row_id=True)
 
