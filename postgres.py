@@ -13,7 +13,7 @@ def connect_db():
 
     try:
         db = psycopg2.connect(host=DB_HOST,
-                              dbname='clackbot-quotes',
+                              dbname='plz',
                               user=DB_USER,
                               password=DB_PASSWORD)
     except psycopg2.Error as error:
