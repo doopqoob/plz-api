@@ -154,6 +154,37 @@ def create_api_key():
     return {'credential_id': credential_id, 'secret': secret}
 
 
+def verify_api_key(credential_id, secret):
+    """Verify a given API key"""
+
+    # check that credential and secret are provided
+    if not credential_id:
+        return False
+
+    if not secret:
+        return False
+
+    # Prepare database query
+    query = "SELECT * FROM credential WHERE credential_id = %s AND active = true"
+    data = (credential_id,)
+
+    # Execute database query
+    rows = select(query, data, real_dict_cursor=True)
+
+    # Ensure a row came back
+    if not rows:
+        return False
+
+    # Verify password hash
+    hash = rows[0]['password_hash']
+    pass_hasher = PasswordHasher()
+
+    if not pass_hasher.verify(hash, secret):
+        return False
+
+    return True
+
+
 def create_crate(crate_name):
     """Creates a new crate in which to file songs"""
     query = "INSERT INTO crate (crate_name) VALUES (%s) RETURNING crate_id"
