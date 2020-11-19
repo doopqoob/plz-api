@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS selected_request (
     song_id uuid NOT NULL REFERENCES song(song_id) ON DELETE CASCADE
 );
 
-CREATE VIEW request AS
+CREATE OR REPLACE VIEW request AS
     SELECT ticket_id,
            'freeform' as type,
            artist,

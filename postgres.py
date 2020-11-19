@@ -145,6 +145,9 @@ def get_crate_id(crate_name):
 
     rows = select(query, data, real_dict_cursor=True)
 
+    if not rows:
+        return None
+
     if rows[0]['crate_id']:
         return rows[0]['crate_id']
     else:
