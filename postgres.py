@@ -172,8 +172,8 @@ def insert_song_metadata(song_metadata):
     # Insert values into song, unless there's already a song with that hash, in which case update metadata for
     # the song with the given hash
     query = "INSERT INTO song (crate_id, hash, artist, title, tempo, key) VALUES (%s, %s, %s, %s, %s, %s) " \
-            "ON CONFLICT (song.hash) " \
-            "DO UPDATE SET artist = %s, title = %s, tempo = %s, key = %s WHERE song.hash = %s"
+            "ON CONFLICT (song(hash)) " \
+            "DO UPDATE SET artist = %s, title = %s, tempo = %s, key = %s WHERE song(hash) = %s"
 
     # data fields have to match every %s in order, which is why you see the same values twice,
     # in a different order each time.
