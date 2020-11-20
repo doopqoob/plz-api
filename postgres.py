@@ -270,7 +270,6 @@ def insert_song_metadata(song_metadata):
             "DO UPDATE SET artist = %s, title = %s, tempo = %s, key = %s " \
             "RETURNING song_id"
 
-
     # data fields have to match every %s in order, which is why you see some values twice
     data = (crate_id,
             song_hash,

@@ -27,7 +27,7 @@ def hello_world():
     return 'Hello World!'
 
 
-@app.route('/api/key')
+@app.route('/api_key')
 def new_api_key():
     """Get a new API key"""
     credentials = postgres.create_api_key()
@@ -38,7 +38,7 @@ def new_api_key():
 
     return credentials, 200
 
-@app.route('/add/song', methods=['POST'])
+@app.route('/add_song', methods=['POST'])
 @auth.login_required
 def add_song():
     """Add a song to the database"""
@@ -55,7 +55,7 @@ def add_song():
     return message, 201
 
 
-@app.route('/add/show', methods=['POST'])
+@app.route('/add_show', methods=['POST'])
 @auth.login_required
 def add_show():
     """Add a show to the database"""
@@ -69,7 +69,7 @@ def add_show():
     return message, 201
 
 
-@app.route('/get/shows')
+@app.route('/get_shows')
 def get_shows():
     """Get a list of all active shows"""
     shows = postgres.get_shows()
@@ -78,4 +78,5 @@ def get_shows():
         message = {"message": "No active shows in DB"}
         return message, 500
 
-    return shows, 200
+    message = {"shows": shows}
+    return message, 200
