@@ -85,8 +85,8 @@ def get_shows():
 @app.route('/get_crates')
 def get_crates():
     """Get a list of all crates associated with a show"""
-    show_id = request.args.get('show_id')
-    if show_id:
+    if request.args.get('show_id'):
+        show_id = int(request.args.get('show_id'))
         crates = postgres.get_crates(show_id)
     else:
         crates = postgres.get_crates()

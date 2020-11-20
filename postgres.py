@@ -249,7 +249,7 @@ def get_shows():
 
 def get_crates(show_id=None):
     """Gets a list of crates associated with a show. If no show is given, gets all crates."""
-    if show_id:
+    if isinstance(show_id, int):
         query = "SELECT * FROM show_crate INNER JOIN crate on show_crate.crate_id = crate.crate_id WHERE show_id = %s "
         data = (show_id,)
         rows = select(query, data, real_dict_cursor=True)
