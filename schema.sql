@@ -28,14 +28,16 @@ CREATE TABLE IF NOT EXISTS song (
     hash bytea UNIQUE NOT NULL,
     artist text NOT NULL,
     title text NOT NULL,
-    tempo smallint NOT NULL,
-    key text NOT NULL
+    tempo smallint,
+    key text
 );
 
 CREATE TABLE IF NOT EXISTS ticket (
     ticket_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     requested_at timestamptz NOT NULL DEFAULT now(),
     requested_by text NOT NULL,
+    ip_address inet NOT NULL,
+    reverse_dns text,
     printed boolean NOT NULL DEFAULT FALSE,
     notes text
 );
