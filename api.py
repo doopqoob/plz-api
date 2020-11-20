@@ -44,12 +44,26 @@ def add_song():
     """Add a song to the database"""
     # Get the JSON from the request and send it to the postgres module. If everything is successful, the
     # postgres module will return the ID of the newly-created song entry in the DB.
-    id = postgres.insert_song_metadata(request.get_json())
+    song_id = postgres.insert_song_metadata(request.get_json())
 
-    if not id:
+    if not song_id:
         message = {"message": "Something went wrong adding your song"}
         return message, 500
 
     # Return the new quote ID
-    message = {"id": id}
+    message = {"id": song_id}
+    return message, 201
+
+
+@app.route('/add/show', methods=['POST'])
+@auth.login_required
+def add_show():
+    """Add a show to the database"""
+    show_id = postgres.create_show(request.get_json()['show_name'])
+
+    if not show_id:
+        message = {"message": "Something went wrong adding your show"}
+        return message, 500
+
+    message = {"id": show_id}
     return message, 201

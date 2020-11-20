@@ -187,6 +187,9 @@ def verify_api_key(credential_id, secret):
 
 def create_crate(crate_name):
     """Creates a new crate in which to file songs"""
+    if crate_name is None:
+        return None
+
     query = "INSERT INTO crate (crate_name) VALUES (%s) RETURNING crate_id"
     data = (crate_name,)
     crate_id = insert(query, data, return_inserted_row_id=True)
@@ -199,6 +202,9 @@ def create_crate(crate_name):
 
 
 def get_crate_id(crate_name):
+    if crate_name is None:
+        return None
+
     query = "SELECT crate_id FROM crate WHERE crate_name = %s"
     data = (crate_name,)
 
@@ -210,6 +216,22 @@ def get_crate_id(crate_name):
     if rows[0]['crate_id']:
         return rows[0]['crate_id']
     else:
+        return None
+
+
+def create_show(show_name):
+    """Creates a new show, which is really just a collection of crates"""
+    if show_name is None:
+        return None
+
+    query = "INSERT INTO show (show_name) VALUES (%s) RETURNING show_id"
+    data = (show_name,)
+    show_id = insert(query, data, return_inserted_row_id=True)
+
+    if show_id:
+        return show_id
+    else:
+        print("something went wrong adding a show")
         return None
 
 
