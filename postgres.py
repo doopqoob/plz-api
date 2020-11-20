@@ -247,6 +247,19 @@ def get_shows():
         return None
 
 
+def get_crates(show_id):
+    """Gets a list of crates associated with a show. If no show is given, gets all crates."""
+    if show_id:
+        query = "SELECT crate_id,crate_name FROM show_crates WHERE show_id = %s"
+        data = (show_id,)
+        rows = select(query, data)
+    else:
+        query = "SELECT crate_id,crate_name FROM show_crates"
+        rows = select(query)
+
+    return rows
+
+
 def associate_crates(show_id, crate_ids):
     """Associate any number of crates with a show."""
     query = "INSERT INTO show_crates (show_id, crate_id) VALUES (%s, %s)"

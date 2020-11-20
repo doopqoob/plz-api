@@ -82,6 +82,19 @@ def get_shows():
     return message, 200
 
 
+@app.route('/get_crates')
+def get_crates():
+    """Get a list of all crates associated with a show"""
+    crates = postgres.get_crates(request.args.get('show_id'))
+
+    if not crates:
+        message = {"message": "No crates associated with given show_id."}
+        return message, 500
+
+    message = {"crates": crates}
+    return message, 200
+
+
 @app.route('/associate_crates', methods=['POST'])
 @auth.login_required
 def associate_crates():
