@@ -247,6 +247,22 @@ def get_shows():
         return None
 
 
+def associate_crates(show_id, crate_ids):
+    """Associate any number of crates with a show."""
+    query = "INSERT INTO show_crates (show_id, crate_id) VALUES (%s, %s)"
+
+    if crate_ids is not type(list):
+        return False
+
+    for crate_id in crate_ids:
+        data = (show_id, crate_id)
+        result = insert(query, data)
+        if result is not True:
+            return False
+
+    return True
+
+
 def insert_song_metadata(song_metadata):
     """Inserts a song's metadata into the DB"""
 

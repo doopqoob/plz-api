@@ -80,3 +80,23 @@ def get_shows():
 
     message = {"shows": shows}
     return message, 200
+
+
+@app.route('/associate_crates', methods=['POST'])
+@auth.login_required
+def associate_crates():
+    """Associate a show with one or more crates. Any number of crates can be shared by any number of shows."""
+    association = request.get_json()
+
+    result = postgres.associate_crates(association['show_id'],association['crate_ids'])
+
+    if result is False:
+        message = {"message": "Something went wrong associating your crates"}
+        return message, 500
+
+    if result is True:
+        message = {"message": "Crates associated successfully!"}
+        return message, 201
+
+    return 500
+
