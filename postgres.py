@@ -250,19 +250,22 @@ def get_shows():
 def get_crates(show_id=None):
     """Gets a list of crates associated with a show. If no show is given, gets all crates."""
     if show_id:
-        query = "SELECT crate_id,crate_name FROM show_crate WHERE show_id = %s"
+        query = "SELECT * FROM show_crate INNER JOIN crate on show_crate.crate_id = crate.crate_id WHERE show_id = %s "
         data = (show_id,)
-        rows = select(query, data)
+        rows = select(query, data, real_dict_cursor=True)
+        crates = []
+        for row in rows:
+            crates.append((row['crate_id'],row['crate_name']))
+        return crates
     else:
-        query = "SELECT crate_id,crate_name FROM show_crate"
-        rows = select(query)
-
-    return rows
+        query = "SELECT crate_id,crate_name FROM crate"
+        crates = select(query)
+        return crates
 
 
 def associate_crates(show_id, crate_ids):
     """Associate any number of crates with a show."""
-    query = "INSERT INTO show_crates (show_id, crate_id) VALUES (%s, %s)"
+    query = "INSERT INTO show_crate (show_id, crate_id) VALUES (%s, %s)"
 
     if crate_ids is not type(list):
         return False
