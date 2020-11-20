@@ -1,6 +1,7 @@
 # Requirements for plz-api
 
 flask
+flask-HTTPauth
 python-dotenv
 psycopg2-binary
 argon2-cffi
