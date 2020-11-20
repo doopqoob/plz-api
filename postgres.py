@@ -247,7 +247,7 @@ def get_shows():
         return None
 
 
-def get_crates(show_id):
+def get_crates(show_id=None):
     """Gets a list of crates associated with a show. If no show is given, gets all crates."""
     if show_id:
         query = "SELECT crate_id,crate_name FROM show_crates WHERE show_id = %s"
