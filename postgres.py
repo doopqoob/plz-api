@@ -235,6 +235,18 @@ def create_show(show_name):
         return None
 
 
+def get_shows():
+    """Get a list of all shows from the database"""
+    query = "SELECT show_id,show_name FROM show WHERE active = true ORDER BY show_name"
+    rows = select(query)
+
+    if rows:
+        return rows
+    else:
+        print("No active shows in DB")
+        return None
+
+
 def insert_song_metadata(song_metadata):
     """Inserts a song's metadata into the DB"""
 

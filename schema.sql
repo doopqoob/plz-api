@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS credential (
 
 CREATE TABLE IF NOT EXISTS show (
     show_id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
-    show_name text UNIQUE NOT NULL
+    show_name text UNIQUE NOT NULL,
+    active bool DEFAULT true
 );
 
 CREATE TABLE IF NOT EXISTS crate (

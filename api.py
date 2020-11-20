@@ -67,3 +67,15 @@ def add_show():
 
     message = {"id": show_id}
     return message, 201
+
+
+@app.route('/get/shows')
+def get_shows():
+    """Get a list of all active shows"""
+    shows = postgres.get_shows()
+
+    if not shows:
+        message = {"message": "No active shows in DB"}
+        return message, 500
+
+    return shows, 200
