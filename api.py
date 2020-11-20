@@ -3,15 +3,23 @@ import postgres
 
 from flask import Flask
 from flask import request
+from flask_httpauth import HTTPBasicAuth
 
 from dotenv import load_dotenv
 
 app = Flask(__name__)
+auth = HTTPBasicAuth()
 
 
 @app.before_first_request
 def init_db():
     postgres.init_db()
+
+@auth.verify_password
+def verify_password(credential_id, secret):
+    if postgres.verify_api_key(credential_id, secret):
+        return True
+    return None
 
 
 @app.route('/')
@@ -31,6 +39,7 @@ def new_api_key():
     return credentials, 200
 
 @app.route('/add/song', methods=['POST'])
+@auth.login_required
 def add_song():
     """Add a song to the database"""
     # Get the JSON from the request and send it to the postgres module. If everything is successful, the
