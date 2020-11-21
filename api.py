@@ -4,6 +4,7 @@ import postgres
 from flask import Flask
 from flask import request
 from flask_httpauth import HTTPBasicAuth
+from uuid import UUID
 
 from dotenv import load_dotenv
 
@@ -142,7 +143,10 @@ def get_show_songs():
         message = {"message": "No show provided"}
         return message, 400
 
-    songs = postgres.get_show_songs(int(request.args.get('show_id')), request.args.get('artist_id'))
+    show_id = int(request.args.get('show_id'))
+    artist_id = UUID(request.args.get('artist_id'))
+
+    songs = postgres.get_show_songs(show_id, artist_id)
 
     if songs is None:
         message = {"message": "No songs found"}
