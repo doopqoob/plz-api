@@ -22,12 +22,12 @@ def verify_password(credential_id, secret):
     return None
 
 
-@app.route('/')
+@app.route('/api/v2/')
 def hello_world():
     return 'Hello World!'
 
 
-@app.route('/api_key')
+@app.route('/api/v2/api_key')
 def new_api_key():
     """Get a new API key"""
     credentials = postgres.create_api_key()
@@ -38,7 +38,7 @@ def new_api_key():
 
     return credentials, 200
 
-@app.route('/add_song', methods=['POST'])
+@app.route('/api/v2/add_song', methods=['POST'])
 @auth.login_required
 def add_song():
     """Add a song to the database"""
@@ -55,7 +55,7 @@ def add_song():
     return message, 201
 
 
-@app.route('/add_show', methods=['POST'])
+@app.route('/api/v2/add_show', methods=['POST'])
 @auth.login_required
 def add_show():
     """Add a show to the database"""
@@ -69,7 +69,7 @@ def add_show():
     return message, 201
 
 
-@app.route('/get_shows')
+@app.route('/api/v2/get_shows')
 def get_shows():
     """Get a list of all active shows"""
     shows = postgres.get_shows()
@@ -82,7 +82,7 @@ def get_shows():
     return message, 200
 
 
-@app.route('/get_crates')
+@app.route('/api/v2/get_crates')
 def get_crates():
     """Get a list of all crates associated with a show"""
     if request.args.get('show_id'):
@@ -99,7 +99,7 @@ def get_crates():
     return message, 200
 
 
-@app.route('/associate_crates', methods=['POST'])
+@app.route('/api/v2/associate_crates', methods=['POST'])
 @auth.login_required
 def associate_crates():
     """Associate a show with one or more crates. Any number of crates can be shared by any number of shows."""
