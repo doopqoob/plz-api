@@ -346,12 +346,12 @@ def insert_song_metadata(song_metadata):
     return song_id
 
 
-def get_artists(show_id):
+def get_show_artists(show_id):
     """Get all artists associated with a show"""
     if not isinstance(show_id, int):
         return None
 
-    query = "SELECT artist_id, artist_name, appearances FROM artist_appearances WHERE show_id = %s"
+    query = "SELECT artist_id, artist_name, appearances FROM artist_appearance_count WHERE show_id = %s"
     data = (show_id,)
     rows = select(query, data)
 

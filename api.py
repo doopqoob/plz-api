@@ -118,14 +118,14 @@ def associate_crates():
     return 500
 
 
-@app.route('/api/v2/get_artists')
-def get_artists():
+@app.route('/api/v2/get_show_artists')
+def get_show_artists():
     """Get all artists in the DB for a given show"""
     if request.args.get('show_id') is None:
         message = {"message": "No show provided"}
         return message, 400
 
-    artists = postgres.get_artists(int(request.args.get('show_id')))
+    artists = postgres.get_show_artists(int(request.args.get('show_id')))
 
     if artists is None:
         message = {"message": "No artists found"}

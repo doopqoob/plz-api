@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS selected_request (
     song_id uuid NOT NULL REFERENCES song(song_id) ON DELETE CASCADE
 );
 
-CREATE OR REPLACE VIEW artist_appearances AS
+CREATE OR REPLACE VIEW artist_appearance_count AS
     SELECT show_id, artist.artist_id, artist.artist_name, COUNT(artist.artist_id) as appearances
     FROM show_crate
     INNER JOIN song ON show_crate.crate_id = song.crate_id
