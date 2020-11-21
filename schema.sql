@@ -54,6 +54,13 @@ CREATE TABLE IF NOT EXISTS selected_request (
     song_id uuid NOT NULL REFERENCES song(song_id) ON DELETE CASCADE
 );
 
+CREATE OR REPLACE VIEW artist_appearances AS
+    SELECT show_id, artist, COUNT(artist) as appearances
+    FROM show_crate
+    INNER JOIN song ON show_crate.crate_id = song.crate_id
+    GROUP BY show_id,artist
+    ORDER BY artist;
+
 CREATE OR REPLACE VIEW request AS
     SELECT ticket_id,
            'freeform' as type,
@@ -70,4 +77,5 @@ UNION
            tempo,
            key
     FROM selected_request
-        INNER JOIN song on selected_request.song_id = song.song_id;
+        INNER JOIN song ON selected_request.song_id = song.song_id;
+

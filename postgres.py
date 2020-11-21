@@ -281,6 +281,8 @@ def associate_crates(show_id, crate_ids):
 
 def insert_song_metadata(song_metadata):
     """Inserts a song's metadata into the DB"""
+    if not song_metadata:
+        return None
 
     # get the id of the crate named in the song metadata
     crate_id = get_crate_id(song_metadata['crate_name'])
@@ -290,7 +292,7 @@ def insert_song_metadata(song_metadata):
         crate_id = create_crate(song_metadata['crate_name'])
 
         if not crate_id:
-            return
+            return None
 
     song_hash = bytes.fromhex(song_metadata['hash'])
 
@@ -316,3 +318,18 @@ def insert_song_metadata(song_metadata):
 
     song_id = insert(query, data, return_inserted_row_id=True)
     return song_id
+
+
+def get_artists(show_id=None):
+    """Get all artists associated with a show"""
+    if not isinstance(show_id, int):
+        return None
+
+    query = "SELECT * FROM artist_appearances WHERE show_id = %s"
+    data = (show_id,)
+    rows = select(query, data)
+
+    if not rows:
+        return None
+
+    return rows
