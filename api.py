@@ -165,7 +165,7 @@ def add_selected_request():
     """Add a request the user has selected from a list"""
     form_data = request.get_json()
 
-    if form_data['email']:
+    if 'email' in form_data:
         message = {"message": "Success!"}
         return 201
 
