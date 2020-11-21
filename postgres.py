@@ -194,10 +194,14 @@ def create_crate(crate_name):
     if crate_name is None:
         return None
 
-    query = "INSERT INTO crate (crate_name) VALUES (%s) " \
-            "ON CONFLICT (crate_name) DO UPDATE SET crate_name = %s " \
-            "RETURNING crate_id"
-    data = (crate_name, crate_name)
+    query = "SELECT crate_id FROM crate WHERE crate_name = %s"
+    data = (crate_name,)
+    crate_id = select(query, data)
+
+    if crate_id:
+        return crate_id
+
+    query = "INSERT INTO crate (crate_name) VALUES (%s) RETURNING crate_id"
     crate_id = insert(query, data, return_inserted_row_id=True)
 
     if crate_id:
@@ -290,14 +294,19 @@ def create_artist(artist_name):
     if artist_name is None:
         return None
 
-    query = "INSERT INTO artist (artist_name) VALUES (%s) " \
-            "ON CONFLICT (artist_name) DO UPDATE SET artist_name = %s " \
-            "RETURNING artist_id"
-    data = (artist_name, artist_name)
-    crate_id = insert(query, data, return_inserted_row_id=True)
+    query = "SELECT artist_id FROM artist WHERE artist_name = %s"
+    data = (artist_name,)
+    artist_id = select(query, data)
 
-    if crate_id:
-        return crate_id
+    if artist_id:
+        return artist_id
+
+    query = "INSERT INTO artist (artist_name) VALUES (%s) RETURNING artist_id"
+
+    artist_id = insert(query, data, return_inserted_row_id=True)
+
+    if artist_id:
+        return artist_id
     else:
         print("something went wrong creating/inserting an artist")
         return None

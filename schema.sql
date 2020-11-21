@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS selected_request (
 );
 
 CREATE OR REPLACE VIEW artist_appearances AS
-    SELECT show_id, artist.artist_id, artist_name, COUNT(artist_name) as appearances
+    SELECT show_id, artist.artist_id, artist.artist_name, COUNT(artist.artist_id) as appearances
     FROM show_crate
     INNER JOIN song ON show_crate.crate_id = song.crate_id
     INNER JOIN artist ON song.artist_id = artist.artist_id
