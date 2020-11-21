@@ -23,14 +23,19 @@ CREATE TABLE IF NOT EXISTS show_crate (
     PRIMARY KEY(show_id, crate_id)
 );
 
+CREATE TABLE IF NOT EXISTS artist (
+    artist_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    artist_name text UNIQUE NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS song (
     song_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     crate_id int NOT NULL REFERENCES crate(crate_id) ON DELETE CASCADE,
     hash bytea UNIQUE NOT NULL,
-    artist text NOT NULL,
-    title text NOT NULL,
-    tempo smallint,
-    key text
+    artist_id uuid NOT NULL REFERENCES artist(artist_id) ON DELETE CASCADE,
+    song_title text NOT NULL,
+    song_tempo smallint,
+    song_key text
 );
 
 CREATE TABLE IF NOT EXISTS ticket (
@@ -45,8 +50,8 @@ CREATE TABLE IF NOT EXISTS ticket (
 
 CREATE TABLE IF NOT EXISTS freeform_request (
     ticket_id uuid PRIMARY KEY REFERENCES ticket(ticket_id) ON DELETE CASCADE,
-    artist text NOT NULL,
-    title text NOT NULL
+    artist_name text NOT NULL,
+    song_title text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS selected_request (
@@ -55,27 +60,27 @@ CREATE TABLE IF NOT EXISTS selected_request (
 );
 
 CREATE OR REPLACE VIEW artist_appearances AS
-    SELECT show_id, artist, COUNT(artist) as appearances
+    SELECT show_id, artist.artist_id, artist_name, COUNT(artist_name) as appearances
     FROM show_crate
     INNER JOIN song ON show_crate.crate_id = song.crate_id
-    GROUP BY show_id,artist
-    ORDER BY artist;
+    INNER JOIN artist ON song.artist_id = artist.artist_id
+    GROUP BY show_id,artist_name
+    ORDER BY artist_name;
 
 CREATE OR REPLACE VIEW request AS
     SELECT ticket_id,
            'freeform' as type,
-           artist,
-           title,
-           null as tempo,
+           artist_name as artist,
+           song_title,
+           null as song_tempo,
            null as key
     FROM freeform_request
 UNION
     SELECT ticket_id,
            'selected' as type,
-           artist,
-           title,
-           tempo,
-           key
+           artist_id as artist,
+           song_title,
+           song_tempo,
+           song_key
     FROM selected_request
         INNER JOIN song ON selected_request.song_id = song.song_id;
-

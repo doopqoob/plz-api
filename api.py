@@ -125,11 +125,11 @@ def get_artists():
         message = {"message": "No show provided"}
         return message, 400
 
-    artists = postgres.get_artists(request.args.get('show_id'))
+    artists = postgres.get_artists(int(request.args.get('show_id')))
 
     if artists is None:
         message = {"message": "No artists found"}
-        return 404
+        return message, 404
 
     message = {"artists": artists}
     return message, 200

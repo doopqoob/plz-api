@@ -190,7 +190,9 @@ def create_crate(crate_name):
     if crate_name is None:
         return None
 
-    query = "INSERT INTO crate (crate_name) VALUES (%s) RETURNING crate_id"
+    query = "INSERT INTO crate (crate_name) VALUES (%s) " \
+            "ON CONFLICT (crate_name) DO NOTHING " \
+            "RETURNING crate_id"
     data = (crate_name,)
     crate_id = insert(query, data, return_inserted_row_id=True)
 
@@ -201,22 +203,22 @@ def create_crate(crate_name):
         return None
 
 
-def get_crate_id(crate_name):
-    if crate_name is None:
-        return None
-
-    query = "SELECT crate_id FROM crate WHERE crate_name = %s"
-    data = (crate_name,)
-
-    rows = select(query, data, real_dict_cursor=True)
-
-    if not rows:
-        return None
-
-    if rows[0]['crate_id']:
-        return rows[0]['crate_id']
-    else:
-        return None
+# def get_crate_id(crate_name):
+#     if crate_name is None:
+#         return None
+#
+#     query = "SELECT crate_id FROM crate WHERE crate_name = %s"
+#     data = (crate_name,)
+#
+#     rows = select(query, data, real_dict_cursor=True)
+#
+#     if not rows:
+#         return None
+#
+#     if rows[0]['crate_id']:
+#         return rows[0]['crate_id']
+#     else:
+#         return None
 
 
 def create_show(show_name):
@@ -279,39 +281,68 @@ def associate_crates(show_id, crate_ids):
     return True
 
 
+def create_artist(artist_name):
+    """Creates a new crate in which to file songs"""
+    if artist_name is None:
+        return None
+
+    query = "INSERT INTO artist (artist_name) VALUES (%s) " \
+            "ON CONFLICT (artist_name) DO NOTHING " \
+            "RETURNING artist_id"
+    data = (artist_name,)
+    crate_id = insert(query, data, return_inserted_row_id=True)
+
+    if crate_id:
+        return crate_id
+    else:
+        print("something went wrong creating/inserting an artist")
+        return None
+
+
 def insert_song_metadata(song_metadata):
     """Inserts a song's metadata into the DB"""
     if not song_metadata:
         return None
 
     # get the id of the crate named in the song metadata
-    crate_id = get_crate_id(song_metadata['crate_name'])
+    # (or create it if it doesn't exist)
+    crate_id = create_crate(song_metadata['crate_name'])
 
-    # If the crate doesn't exist yet, create it
     if not crate_id:
-        crate_id = create_crate(song_metadata['crate_name'])
+        return None
 
-        if not crate_id:
-            return None
+    # # If the crate doesn't exist yet, create it
+    # if not crate_id:
+    #     crate_id = create_crate(song_metadata['crate_name'])
+    #
+    #     if not crate_id:
+    #         return None
 
+    # do the same for artist_id
+    artist_id = create_artist(song_metadata['artist'])
+
+    if not artist_id:
+        return None
+
+    # hash the song audio (but not the metadata)
     song_hash = bytes.fromhex(song_metadata['hash'])
 
     # Insert values into song, unless there's already a song with that hash, in which case update metadata for
     # the song with the given hash
-    query = "INSERT INTO song (crate_id, hash, artist, title, tempo, key) " \
+    query = "INSERT INTO song (crate_id, hash, artist_id, song_title, song_tempo, song_key) " \
             "VALUES (%s, %s, %s, %s, %s, %s) " \
             "ON CONFLICT (hash) " \
-            "DO UPDATE SET artist = %s, title = %s, tempo = %s, key = %s " \
+            "DO UPDATE SET artist_id = %s, song_title = %s, song_tempo = %s, song_key = %s " \
             "RETURNING song_id"
 
     # data fields have to match every %s in order, which is why you see some values twice
     data = (crate_id,
             song_hash,
-            song_metadata['artist'],
+            artist_id,
             song_metadata['title'],
             song_metadata['tempo'],
             song_metadata['key'],
-            song_metadata['artist'],
+            artist_id,
             song_metadata['title'],
             song_metadata['tempo'],
             song_metadata['key'])
@@ -320,12 +351,12 @@ def insert_song_metadata(song_metadata):
     return song_id
 
 
-def get_artists(show_id=None):
+def get_artists(show_id):
     """Get all artists associated with a show"""
     if not isinstance(show_id, int):
         return None
 
-    query = "SELECT * FROM artist_appearances WHERE show_id = %s"
+    query = "SELECT artist_id, artist_name, appearances FROM artist_appearances WHERE show_id = %s"
     data = (show_id,)
     rows = select(query, data)
 
