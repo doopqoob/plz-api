@@ -158,3 +158,17 @@ def get_show_songs():
 
     message = {"songs": songs}
     return message, 200
+
+
+@app.route('/api/v2/add_selected_request', methods=['POST'])
+def add_selected_request():
+    """Add a request the user has selected from a list"""
+    form_data = request.get_json()
+
+    if form_data['email']:
+        message = {"message": "Success!"}
+        return 201
+
+    if postgres.add_selected_request(form_data, request.remote_addr):
+        message = {"message": "Success!"}
+        return 201

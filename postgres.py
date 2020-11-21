@@ -360,6 +360,7 @@ def get_show_artists(show_id):
 
     return rows
 
+
 def get_show_songs(show_id, artist_id=None):
     """Get all songs for a show associated with a specific artist. If no artist is given, get all songs for a show."""
     if not isinstance(show_id, int):
@@ -386,3 +387,40 @@ def get_show_songs(show_id, artist_id=None):
         return rows
     else:
         return None
+
+
+def add_selected_request(form_data, ip_address):
+    """Add a request where the user has selected a song from a list"""
+
+    # Validate input and add to database
+    if 'show_id' in form_data:
+        try:
+            song_id = UUID(form_data['song_id'])
+        except ValueError as e:
+            print(e)
+            return False
+    else:
+        return False
+
+    if 'song_id' in form_data:
+        try:
+            song_id = UUID(form_data['song_id'])
+        except ValueError as e:
+            print(e)
+            return False
+    else:
+        return False
+
+    if 'submitted_by' in form_data:
+        submitted_by = form_data['submitted_by']
+    else:
+        return False
+
+    if 'notes' in form_data:
+        notes = form_data['notes']
+    else:
+        notes = None
+
+    print(ip_address)
+
+    return True
