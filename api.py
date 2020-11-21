@@ -167,8 +167,12 @@ def add_selected_request():
 
     if 'email' in form_data:
         message = {"message": "Success!"}
-        return 201
+        return message, 201
 
-    if postgres.add_selected_request(form_data, request.remote_addr):
-        message = {"message": "Success!"}
-        return 201
+    ticket_id = postgres.add_selected_request(form_data, request.remote_addr)
+    if ticket_id:
+        message = {"ticket_id": ticket_id}
+        return message, 201
+    else:
+        message = {"message": "Something went wrong inserting your data"}
+        return message, 500

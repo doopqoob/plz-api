@@ -421,6 +421,20 @@ def add_selected_request(form_data, ip_address):
     else:
         notes = None
 
-    print(ip_address)
+    query = "INSERT INTO ticket (requested_by, ip_address, notes) VALUES (%s, %s, %s) RETURNING ticket_id"
+    data = (submitted_by, ip_address, notes)
 
-    return True
+    ticket_id = insert(query, data, return_inserted_row_id=True)
+
+    if ticket_id is None:
+        return False
+
+    query = "INSERT INTO selected_request (ticket_id, song_id) VALUES (%s, %s)"
+    data = (ticket_id, song_id)
+
+    result = insert(query, data)
+
+    if result:
+        return ticket_id
+    else:
+        return False
