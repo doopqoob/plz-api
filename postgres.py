@@ -84,7 +84,11 @@ def insert(query, data, return_inserted_row_id=False):
     # Success!
     if return_inserted_row_id:
         # get the id of the newly-created row
-        row_id = cursor.fetchone()[0]
+        row_id = cursor.fetchone()
+
+        if row_id is None:
+            db.close()
+            return None
 
         # close the database connection and return the id
         db.close()
@@ -191,9 +195,9 @@ def create_crate(crate_name):
         return None
 
     query = "INSERT INTO crate (crate_name) VALUES (%s) " \
-            "ON CONFLICT (crate_name) DO NOTHING " \
+            "ON CONFLICT (crate_name) DO UPDATE SET crate_name = %s " \
             "RETURNING crate_id"
-    data = (crate_name,)
+    data = (crate_name, crate_name)
     crate_id = insert(query, data, return_inserted_row_id=True)
 
     if crate_id:
@@ -287,9 +291,9 @@ def create_artist(artist_name):
         return None
 
     query = "INSERT INTO artist (artist_name) VALUES (%s) " \
-            "ON CONFLICT (artist_name) DO NOTHING " \
+            "ON CONFLICT (artist_name) DO UPDATE SET artist_name = %s " \
             "RETURNING artist_id"
-    data = (artist_name,)
+    data = (artist_name, artist_name)
     crate_id = insert(query, data, return_inserted_row_id=True)
 
     if crate_id:

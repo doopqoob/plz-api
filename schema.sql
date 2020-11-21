@@ -64,13 +64,13 @@ CREATE OR REPLACE VIEW artist_appearances AS
     FROM show_crate
     INNER JOIN song ON show_crate.crate_id = song.crate_id
     INNER JOIN artist ON song.artist_id = artist.artist_id
-    GROUP BY show_id,artist_name
+    GROUP BY show_id, artist.artist_id, artist_name
     ORDER BY artist_name;
 
 CREATE OR REPLACE VIEW request AS
     SELECT ticket_id,
            'freeform' as type,
-           artist_name as artist,
+           artist_name,
            song_title,
            null as song_tempo,
            null as key
@@ -78,9 +78,10 @@ CREATE OR REPLACE VIEW request AS
 UNION
     SELECT ticket_id,
            'selected' as type,
-           artist_id as artist,
+           artist_name,
            song_title,
            song_tempo,
            song_key
     FROM selected_request
-        INNER JOIN song ON selected_request.song_id = song.song_id;
+        INNER JOIN song ON selected_request.song_id = song.song_id
+        INNER JOIN artist ON song.artist_id = artist.artist_id;
