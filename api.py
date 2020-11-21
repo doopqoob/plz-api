@@ -133,3 +133,20 @@ def get_show_artists():
 
     message = {"artists": artists}
     return message, 200
+
+
+@app.route('/api/v2/get_show_songs')
+def get_show_songs():
+    """Get songs for a show, optionally specifying an artist ID"""
+    if request.args.get('show_id') is None:
+        message = {"message": "No show provided"}
+        return message, 400
+
+    songs = postgres.get_show_songs(int(request.args.get('show_id')), request.args.get('artist_id'))
+
+    if songs is None:
+        message = {"message": "No songs found"}
+        return message, 404
+
+    message = {"songs": songs}
+    return message, 200

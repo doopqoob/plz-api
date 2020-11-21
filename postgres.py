@@ -359,3 +359,24 @@ def get_show_artists(show_id):
         return None
 
     return rows
+
+def get_show_songs(show_id, artist_id=None):
+    """Get all songs for a show associated with a specific artist. If no artist is given, get all songs for a show."""
+    if not isinstance(show_id, int):
+        return None
+
+    if artist_id:
+        query = "SELECT song_id, song_title, artist_name FROM song WHERE show_id = %s AND artist_id = %s"
+        data = (show_id,artist_id)
+    else:
+        query = "SELECT song.song_id, song.song_title, artist.artist_name FROM song " \
+                "INNER JOIN artist ON song.artist_id = artist.artist_id " \
+                "WHERE song.show_id = %s"
+        data = (show_id,)
+
+    rows = select(query, data)
+
+    if rows:
+        return rows
+    else:
+        return None
