@@ -369,7 +369,7 @@ def get_show_songs(show_id, artist_id=None):
         query = "SELECT song.song_id, song.song_title, artist.artist_name FROM show_crate " \
                 "INNER JOIN song ON song.crate_id = show_crate.crate_id " \
                 "INNER JOIN artist ON song.artist_id = artist.artist_id " \
-                "WHERE show_crate.show_id = %s AND artist_id = %s " \
+                "WHERE show_crate.show_id = %s AND song.artist_id = %s " \
                 "ORDER BY song.song_title "
         data = (show_id,artist_id)
     else:
