@@ -144,7 +144,11 @@ def get_show_songs():
         return message, 400
 
     show_id = int(request.args.get('show_id'))
-    artist_id = UUID(request.args.get('artist_id'))
+
+    if request.args.get('artist_id'):
+        artist_id = UUID(request.args.get('artist_id'))
+    else:
+        artist_id = None
 
     songs = postgres.get_show_songs(show_id, artist_id)
 
