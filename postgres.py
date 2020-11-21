@@ -92,7 +92,7 @@ def insert(query, data, return_inserted_row_id=False):
 
         # close the database connection and return the id
         db.close()
-        return row_id
+        return row_id[0]
     else:
         db.close()
         return True
