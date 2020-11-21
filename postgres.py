@@ -199,7 +199,7 @@ def create_crate(crate_name):
     crate_id = select(query, data)
 
     if crate_id:
-        return crate_id
+        return crate_id[0]
 
     query = "INSERT INTO crate (crate_name) VALUES (%s) RETURNING crate_id"
     crate_id = insert(query, data, return_inserted_row_id=True)
@@ -209,24 +209,6 @@ def create_crate(crate_name):
     else:
         print("something went wrong creating a crate")
         return None
-
-
-# def get_crate_id(crate_name):
-#     if crate_name is None:
-#         return None
-#
-#     query = "SELECT crate_id FROM crate WHERE crate_name = %s"
-#     data = (crate_name,)
-#
-#     rows = select(query, data, real_dict_cursor=True)
-#
-#     if not rows:
-#         return None
-#
-#     if rows[0]['crate_id']:
-#         return rows[0]['crate_id']
-#     else:
-#         return None
 
 
 def create_show(show_name):
@@ -299,7 +281,7 @@ def create_artist(artist_name):
     artist_id = select(query, data)
 
     if artist_id:
-        return artist_id
+        return artist_id[0]
 
     query = "INSERT INTO artist (artist_name) VALUES (%s) RETURNING artist_id"
 
