@@ -235,7 +235,7 @@ def download_unprinted_tickets():
 
 @app.route('/api/v2/download_ticket')
 @auth.login_required
-def download_unprinted_tickets():
+def download_ticket():
     """Download unprinted tickets"""
     ticket_id = request.args.get('ticket_id')
     if ticket_id is None:
