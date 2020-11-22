@@ -438,3 +438,15 @@ def add_selected_request(form_data, ip_address):
         return ticket_id
     else:
         return False
+
+
+def get_unprinted_tickets():
+    """Gets unprinted tickets"""
+
+    query = "SELECT * FROM request WHERE printed = false"
+    rows = select(query, real_dict_cursor=True)
+
+    if len(rows) == 0:
+        return None
+
+    return rows

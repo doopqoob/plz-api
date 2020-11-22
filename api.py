@@ -176,3 +176,16 @@ def add_selected_request():
     else:
         message = {"message": "Something went wrong inserting your data"}
         return message, 500
+
+
+@app.route('/api/v2/download_unprinted_tickets')
+@auth.login_required
+def download_unprinted_tickets():
+    """Download unprinted tickets"""
+    ticket_list = postgres.get_unprinted_tickets()
+
+    if ticket_list is None:
+        return {"message": "No unprinted tickets"}, 404
+
+    message = {"tickets": ticket_list}
+    return message, 200
