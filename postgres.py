@@ -157,7 +157,7 @@ def is_rate_limited(ip_address):
     row_count = select(query, data)
     row_count = row_count[0][0]
 
-    if row_count > 3:
+    if row_count >= 3:
         return True
 
     # Has the ip address submitted more than ten tickets in the last hour?
@@ -168,7 +168,7 @@ def is_rate_limited(ip_address):
     row_count = select(query, data)
     row_count = row_count[0][0]
 
-    if row_count > 10:
+    if row_count >= 10:
         return True
 
     # Has the ip address submitted more than twenty tickets in the last day?
@@ -179,7 +179,7 @@ def is_rate_limited(ip_address):
     row_count = select(query, data)
     row_count = row_count[0][0]
 
-    if row_count > 20:
+    if row_count >= 20:
         return True
 
     # Congratulations! you passed the test
