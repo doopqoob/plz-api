@@ -425,6 +425,10 @@ def add_selected_request(form_data, ip_address):
         notes = None
 
     reverse_dns = socket.gethostbyaddr(ip_address)
+    if reverse_dns:
+        reverse_dns = reverse_dns[0]
+    else:
+        reverse_dns = None
 
     query = "INSERT INTO ticket (requested_by, ip_address, reverse_dns, notes) VALUES (%s, %s, %s, %s) RETURNING ticket_id"
     data = (submitted_by, ip_address, reverse_dns, notes)
