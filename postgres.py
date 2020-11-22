@@ -466,7 +466,7 @@ def add_freeform_request(form_data, ip_address):
         return False
 
     if 'artist_name' in form_data:
-        artist_name = form_data['song_title']
+        artist_name = form_data['artist_name']
         if len(artist_name) > 128:
             artist_name = artist_name[:128]
     else:
