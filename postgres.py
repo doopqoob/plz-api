@@ -113,19 +113,19 @@ def select(query, data=None, real_dict_cursor=False, time_zone=None):
     else:
         cursor = db.cursor()
 
+    # This must be called to be able to work with UUID objects in postgres for some reason
+    psycopg2.extras.register_uuid()
+
     # Set time zone
     if time_zone is not None:
         try:
-            tzquery = "SET timezone TO %s"
+            tzquery = "SET TIME ZONE %s"
             tzdata = (time_zone,)
             cursor.execute(tzquery, tzdata)
         except psycopg2.Error as error:
             print(f'Error setting time zone: {error}')
             db.close()
             return None
-
-    # This must be called to be able to work with UUID objects in postgres for some reason
-    psycopg2.extras.register_uuid()
 
     # Execute the query
     try:
