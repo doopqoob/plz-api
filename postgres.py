@@ -535,7 +535,7 @@ def get_unprinted_tickets(time_zone):
             "INNER JOIN pg_timezone_names ON %s = pg_timezone_names.name " \
             "WHERE printed = false ORDER BY request.requested_at"
     data = (time_zone, time_zone)
-    rows = select(query, real_dict_cursor=True)
+    rows = select(query, data, real_dict_cursor=True)
 
     if rows is None:
         return None
