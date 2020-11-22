@@ -170,6 +170,11 @@ def add_selected_request():
             message = {"message": "Success!"}
             return message, 201
 
+    # Is sender's ip blocklisted?
+    if postgres.is_blocked(request.remote_addr):
+        message = {"message": "Something went wrong inserting your data"}
+        return message, 500
+
     # Is sender's ip address rate limited?
     if postgres.is_rate_limited(request.remote_addr):
         message = {"message": "Rate-limited"}
@@ -193,6 +198,11 @@ def add_freeform_request():
         if form_data['email']:
             message = {"message": "Success!"}
             return message, 201
+
+    # Is sender's ip blocklisted?
+    if postgres.is_blocked(request.remote_addr):
+        message = {"message": "Something went wrong inserting your data"}
+        return message, 500
 
     # Is sender's ip address rate limited?
     if postgres.is_rate_limited(request.remote_addr):
