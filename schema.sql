@@ -76,6 +76,8 @@ CREATE OR REPLACE VIEW request AS
            null as song_key,
            requested_by,
            notes,
+           ip_address,
+           reverse_dns,
            printed
     FROM freeform_request
     INNER JOIN ticket on freeform_request.ticket_id = ticket.ticket_id
@@ -88,6 +90,8 @@ UNION
            song_key,
            requested_by,
            notes,
+           ip_address,
+           reverse_dns,
            printed
     FROM selected_request
         INNER JOIN song ON selected_request.song_id = song.song_id

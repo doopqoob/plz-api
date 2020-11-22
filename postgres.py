@@ -1,7 +1,10 @@
+
+
 import psycopg2
 import psycopg2.extras
 import os
 import secrets
+import socket
 
 from argon2 import PasswordHasher
 from uuid import UUID
@@ -421,8 +424,10 @@ def add_selected_request(form_data, ip_address):
     else:
         notes = None
 
-    query = "INSERT INTO ticket (requested_by, ip_address, notes) VALUES (%s, %s, %s) RETURNING ticket_id"
-    data = (submitted_by, ip_address, notes)
+    reverse_dns = socket.gethostbyaddr(ip_address)
+
+    query = "INSERT INTO ticket (requested_by, ip_address, reverse_dns, notes) VALUES (%s, %s, %s, %s) RETURNING ticket_id"
+    data = (submitted_by, ip_address, reverse_dns, notes)
 
     ticket_id = insert(query, data, return_inserted_row_id=True)
 
