@@ -101,7 +101,7 @@ def insert(query, data, return_inserted_row_id=False):
         return True
 
 
-def select(query, data=None, real_dict_cursor=False):
+def select(query, data=None, real_dict_cursor=False, time_zone=None):
     """Queries the database and returns all rows."""
     db = connect_db()
     if not db:
@@ -112,6 +112,17 @@ def select(query, data=None, real_dict_cursor=False):
         cursor = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     else:
         cursor = db.cursor()
+
+    # Set time zone
+    if time_zone is not None:
+        try:
+            query = "SET timezone = %s"
+            data = (time_zone,)
+            cursor.execute(query, data)
+        except psycopg2.Error as error:
+            print(f'Error setting time zone: {error}')
+            db.close()
+            return None
 
     # This must be called to be able to work with UUID objects in postgres for some reason
     psycopg2.extras.register_uuid()
@@ -517,7 +528,7 @@ def add_freeform_request(form_data, ip_address):
         return False
 
 
-def get_unprinted_tickets():
+def get_unprinted_tickets(time_zone):
     """Gets unprinted tickets"""
 
     query = "SELECT * FROM request WHERE printed = false ORDER BY requested_at"

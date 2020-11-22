@@ -202,7 +202,9 @@ def add_freeform_request():
 @auth.login_required
 def download_unprinted_tickets():
     """Download unprinted tickets"""
-    ticket_list = postgres.get_unprinted_tickets()
+    time_zone = request.args.get('time_zone')
+
+    ticket_list = postgres.get_unprinted_tickets(time_zone)
 
     if ticket_list is None:
         return {"message": "No unprinted tickets"}, 404
