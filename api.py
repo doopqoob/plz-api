@@ -233,6 +233,28 @@ def download_unprinted_tickets():
     return message, 200
 
 
+@app.route('/api/v2/download_ticket')
+@auth.login_required
+def download_unprinted_tickets():
+    """Download unprinted tickets"""
+    ticket_id = request.args.get('ticket_id')
+    if ticket_id is None:
+        return {"message": "Missing ticket ID"}, 400
+
+    time_zone = request.args.get('time_zone')
+
+    if time_zone is None:
+        time_zone = "Etc/UTC"
+
+    ticket = postgres.get_ticket(ticket_id, time_zone)
+
+    if ticket is None:
+        return {"message": "No ticket by that ID"}, 404
+
+    message = {"ticket": ticket}
+    return message, 200
+
+
 @app.route('/api/v2/mark_ticket_printed')
 @auth.login_required
 def mark_ticket_printed():

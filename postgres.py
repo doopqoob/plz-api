@@ -623,6 +623,31 @@ def get_unprinted_tickets(time_zone):
     return rows
 
 
+def get_ticket(ticket_id, time_zone):
+    """Gets a specific ticket by ID number"""
+    try:
+        ticket_id = UUID(ticket_id)
+    except ValueError as e:
+        print(e)
+        return False
+
+    query = "SELECT " \
+            "request.*, " \
+            "to_char(requested_at AT TIME ZONE %s, 'YYYY-MM-DD HH24:MI:SS') AS requested_at, " \
+            "pg_timezone_names.abbrev AS tz_abbrev " \
+            "FROM request " \
+            "INNER JOIN pg_timezone_names ON %s = pg_timezone_names.name " \
+            "WHERE ticket_id = %s"
+    data = (time_zone, time_zone, ticket_id)
+
+    result = select(query, data)
+
+    if result:
+        return result
+    else:
+        return None
+
+
 def mark_ticket_as_printed(ticket_id):
     """Marks a ticket as printed"""
     try:
