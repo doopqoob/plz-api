@@ -146,6 +146,46 @@ def select(query, data=None, real_dict_cursor=False, time_zone=None):
     return rows
 
 
+def is_rate_limited(ip_address):
+    """Returns True if ip_address has hit its rate limits, False otherwise"""
+
+    # Has the ip address submitted more than three tickets in the last minute?
+    query = "SELECT COUNT(ticket_id) FROM ticket " \
+            "WHERE requested_at >= (now() - INTERVAL '1 minute') AND ip_address = %s"
+    data = (ip_address,)
+
+    row_count = select(query, data)
+    row_count = row_count[0][0]
+
+    if row_count > 3:
+        return True
+
+    # Has the ip address submitted more than ten tickets in the last hour?
+    query = "SELECT COUNT(ticket_id) FROM ticket " \
+            "WHERE requested_at >= (now() - INTERVAL '1 hour') AND ip_address = %s"
+    data = (ip_address,)
+
+    row_count = select(query, data)
+    row_count = row_count[0][0]
+
+    if row_count > 10:
+        return True
+
+    # Has the ip address submitted more than twenty tickets in the last day?
+    query = "SELECT COUNT(ticket_id) FROM ticket " \
+            "WHERE requested_at >= (now() - INTERVAL '1 day') AND ip_address = %s"
+    data = (ip_address,)
+
+    row_count = select(query, data)
+    row_count = row_count[0][0]
+
+    if row_count > 20:
+        return True
+
+    # Congratulations! you passed the test
+    return False
+
+
 def create_api_key():
     """Creates a new API key and returns it to the user."""
     # Create a new secret and hash it

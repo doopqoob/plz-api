@@ -170,6 +170,11 @@ def add_selected_request():
             message = {"message": "Success!"}
             return message, 201
 
+    # Is sender's ip address rate limited?
+    if postgres.is_rate_limited(request.remote_addr):
+        message = {"message": "Rate-limited"}
+        return message, 401
+
     ticket_id = postgres.add_selected_request(form_data, request.remote_addr)
     if ticket_id:
         message = {"ticket_id": ticket_id}
@@ -188,6 +193,11 @@ def add_freeform_request():
         if form_data['email']:
             message = {"message": "Success!"}
             return message, 201
+
+    # Is sender's ip address rate limited?
+    if postgres.is_rate_limited(request.remote_addr):
+        message = {"message": "Rate-limited"}
+        return message, 401
 
     ticket_id = postgres.add_freeform_request(form_data, request.remote_addr)
     if ticket_id:
