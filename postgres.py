@@ -150,6 +150,10 @@ def add_to_blocklist(ip_address, notes):
     """Adds IP address to blocklist for ever and ever"""
 
     reverse_dns = socket.gethostbyaddr(ip_address)
+    if reverse_dns:
+        reverse_dns = reverse_dns[0]
+    else:
+        reverse_dns = None
 
     query = "INSERT INTO blocklist (ip_address, reverse_dns, notes) VALUES (%s, %s, %s)"
     data = (ip_address, reverse_dns, notes)
