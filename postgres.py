@@ -467,7 +467,9 @@ def add_selected_request(form_data, ip_address):
 
     if 'submitted_by' in form_data:
         submitted_by = form_data['submitted_by']
-        if len(submitted_by) > 128:
+        if len(submitted_by) == 0:
+            return False
+        elif len(submitted_by) > 128:
             submitted_by = submitted_by[:128]
     else:
         return False
@@ -518,21 +520,27 @@ def add_freeform_request(form_data, ip_address):
 
     if 'artist_name' in form_data:
         artist_name = form_data['artist_name']
-        if len(artist_name) > 128:
+        if len(artist_name) == 0:
+            return False
+        elif len(artist_name) > 128:
             artist_name = artist_name[:128]
     else:
         return False
 
     if 'song_title' in form_data:
         song_title = form_data['song_title']
-        if len(song_title) > 256:
+        if len(song_title) == 0:
+            return False
+        elif len(song_title) > 256:
             song_title = song_title[:256]
     else:
         return False
 
     if 'submitted_by' in form_data:
         submitted_by = form_data['submitted_by']
-        if len(submitted_by) > 128:
+        if len(submitted_by) == 0:
+            return False
+        elif len(submitted_by) > 128:
             submitted_by = submitted_by[:128]
     else:
         return False
