@@ -116,9 +116,9 @@ def select(query, data=None, real_dict_cursor=False, time_zone=None):
     # Set time zone
     if time_zone is not None:
         try:
-            query = "SET timezone = %s"
-            data = (time_zone,)
-            cursor.execute(query, data)
+            tzquery = "SET timezone = %s"
+            tzdata = (time_zone,)
+            cursor.execute(tzquery, tzdata)
         except psycopg2.Error as error:
             print(f'Error setting time zone: {error}')
             db.close()
