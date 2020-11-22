@@ -639,8 +639,7 @@ def get_ticket(ticket_id, time_zone):
             "INNER JOIN pg_timezone_names ON %s = pg_timezone_names.name " \
             "WHERE ticket_id = %s"
     data = (time_zone, time_zone, ticket_id)
-
-    result = select(query, data)
+    result = select(query, data, real_dict_cursor=True)
 
     if result:
         return result
