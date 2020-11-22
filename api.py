@@ -179,6 +179,25 @@ def add_selected_request():
         return message, 500
 
 
+@app.route('/api/v2/add_freeform_request', methods=['POST'])
+def add_freeform_request():
+    """Add a request the user has entered manually"""
+    form_data = request.get_json()
+
+    if 'email' in form_data:
+        if form_data['email']:
+            message = {"message": "Success!"}
+            return message, 201
+
+    ticket_id = postgres.add_freeform_request(form_data, request.remote_addr)
+    if ticket_id:
+        message = {"ticket_id": ticket_id}
+        return message, 201
+    else:
+        message = {"message": "Something went wrong inserting your data"}
+        return message, 500
+
+
 @app.route('/api/v2/download_unprinted_tickets')
 @auth.login_required
 def download_unprinted_tickets():
