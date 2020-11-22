@@ -416,11 +416,15 @@ def add_selected_request(form_data, ip_address):
 
     if 'submitted_by' in form_data:
         submitted_by = form_data['submitted_by']
+        if len(submitted_by) > 128:
+            submitted_by = submitted_by[:128]
     else:
         return False
 
     if 'notes' in form_data:
         notes = form_data['notes']
+        if len(notes) > 512:
+            notes = notes[:512]
     else:
         notes = None
 
@@ -449,10 +453,74 @@ def add_selected_request(form_data, ip_address):
         return False
 
 
+def add_freeform_request(form_data, ip_address):
+    """Add a request where the user has entered artist/title manually"""
+
+    if 'show_id' in form_data:
+        try:
+            show_id = int(form_data['show_id'])
+        except ValueError as e:
+            print(e)
+            return False
+    else:
+        return False
+
+    if 'artist_name' in form_data:
+        artist_name = form_data['song_title']
+        if len(artist_name) > 128:
+            artist_name = artist_name[:128]
+    else:
+        return False
+
+    if 'song_title' in form_data:
+        song_title = form_data['song_title']
+        if len(song_title) > 256:
+            song_title = song_title[:256]
+    else:
+        return False
+
+    if 'submitted_by' in form_data:
+        submitted_by = form_data['submitted_by']
+        if len(submitted_by) > 128:
+            submitted_by = submitted_by[:128]
+    else:
+        return False
+
+    if 'notes' in form_data:
+        notes = form_data['notes']
+        if len(notes) > 512:
+            notes = notes[:512]
+    else:
+        notes = None
+
+    reverse_dns = socket.gethostbyaddr(ip_address)
+    if reverse_dns:
+        reverse_dns = reverse_dns[0]
+    else:
+        reverse_dns = None
+
+    query = "INSERT INTO ticket (show_id, requested_by, ip_address, reverse_dns, notes) VALUES (%s, %s, %s, %s, %s) RETURNING ticket_id"
+    data = (show_id, submitted_by, ip_address, reverse_dns, notes)
+    ticket_id = insert(query, data, return_inserted_row_id=True)
+
+    if ticket_id is None:
+        return False
+
+    query = "INSERT INTO freeform_request (ticket_id, artist_name, song_title) VALUES (%s, %s, %s)"
+    data = (ticket_id, artist_name, song_title)
+
+    result = insert(query, data)
+
+    if result:
+        return ticket_id
+    else:
+        return False
+
+
 def get_unprinted_tickets():
     """Gets unprinted tickets"""
 
-    query = "SELECT * FROM request WHERE printed = false"
+    query = "SELECT * FROM request WHERE printed = false ORDER BY requested_at"
     rows = select(query, real_dict_cursor=True)
 
     if len(rows) == 0:

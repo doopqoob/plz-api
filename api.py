@@ -166,8 +166,9 @@ def add_selected_request():
     form_data = request.get_json()
 
     if 'email' in form_data:
-        message = {"message": "Success!"}
-        return message, 201
+        if form_data['email']:
+            message = {"message": "Success!"}
+            return message, 201
 
     ticket_id = postgres.add_selected_request(form_data, request.remote_addr)
     if ticket_id:
