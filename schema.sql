@@ -60,6 +60,13 @@ CREATE TABLE IF NOT EXISTS selected_request (
     song_id uuid NOT NULL REFERENCES song(song_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS blocklist (
+    ip_address inet PRIMARY KEY,
+    blocked_at timestamptz NOT NULL DEFAULT now(),
+    reverse_dns text,
+    notes text
+);
+
 CREATE OR REPLACE VIEW artist_appearance_count AS
     SELECT show_id, artist.artist_id, artist.artist_name, COUNT(artist.artist_id) as appearances
     FROM show_crate

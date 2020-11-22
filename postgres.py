@@ -146,6 +146,34 @@ def select(query, data=None, real_dict_cursor=False, time_zone=None):
     return rows
 
 
+def add_to_blocklist(ip_address, notes):
+    """Adds IP address to blocklist for ever and ever"""
+
+    reverse_dns = socket.gethostbyaddr(ip_address)
+
+    query = "INSERT INTO blocklist (ip_address, reverse_dns, notes) VALUES (%s, %s, %s)"
+    data = (ip_address, reverse_dns, notes)
+    status = insert(query, data)
+
+    if status:
+        return True
+    else:
+        return False
+
+
+def is_blocked(ip_address):
+    """Returns True if ip_address has been blocked, False otherwise"""
+
+    query = "SELECT * from blocklist WHERE ip_address = %s"
+    data = (ip_address,)
+
+    rows = select(query, data)
+    if rows:
+        return True
+    else:
+        return False
+
+
 def is_rate_limited(ip_address):
     """Returns True if ip_address has hit its rate limits, False otherwise"""
 
@@ -359,13 +387,6 @@ def insert_song_metadata(song_metadata):
 
     if not crate_id:
         return None
-
-    # # If the crate doesn't exist yet, create it
-    # if not crate_id:
-    #     crate_id = create_crate(song_metadata['crate_name'])
-    #
-    #     if not crate_id:
-    #         return None
 
     # do the same for artist_id
     artist_id = create_artist(song_metadata['artist'])

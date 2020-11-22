@@ -236,3 +236,29 @@ def mark_ticket_printed():
         return {"message": "success!"}, 200
     else:
         return {"message": "something went wrong!"}, 500
+
+
+@app.route('/api/v2/block_ip', methods=['POST'])
+@auth.login_required
+def block_ip():
+    form_data = request.get_json()
+
+    if 'ip_address' not in form_data:
+        message = {"message": "No IP address given"}
+        return message, 400
+
+    if form_data['ip_address'] is None:
+        message = {"message": "No IP address given"}
+        return message, 400
+
+    if 'notes' not in form_data:
+        notes = None
+    else:
+        notes = form_data['notes']
+
+    result = postgres.add_to_blocklist(form_data['ip_address'], notes)
+
+    if result:
+        return {"message": "success!"}, 201
+    else:
+        return {"message": "something went wrong blocking an ip address"}, 500
