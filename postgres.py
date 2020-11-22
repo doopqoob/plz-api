@@ -531,9 +531,30 @@ def add_freeform_request(form_data, ip_address):
 def get_unprinted_tickets(time_zone):
     """Gets unprinted tickets"""
 
-    query = "SELECT * FROM request WHERE printed = false AT TIME ZONE %s ORDER BY requested_at"
+    # query = "SELECT * FROM request WHERE printed = false AT TIME ZONE %s ORDER BY requested_at"
+
+    query = "SELECT " \
+            "ticket_id, " \
+            "type, " \
+            "requested_at AT TIME ZONE %s AS requested_at, " \
+            "show_name, " \
+            "artist_name, " \
+            "song_title, " \
+            "song_tempo, " \
+            "song_key, " \
+            "requested_by, " \
+            "notes, " \
+            "ip_address, " \
+            "reverse_dns " \
+            "FROM request " \
+            "WHERE printed = false " \
+            "ORDER BY requested_at"
+
     data = (time_zone,)
     rows = select(query, data, real_dict_cursor=True)
+
+    if rows is None:
+        return None
 
     if len(rows) == 0:
         return None
