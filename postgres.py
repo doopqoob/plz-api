@@ -531,7 +531,11 @@ def add_freeform_request(form_data, ip_address):
 def get_unprinted_tickets(time_zone):
     """Gets unprinted tickets"""
 
-    query = "SELECT *, to_char(requested_at AT TIME ZONE %s, 'YYYY Mon DD HH24:MI:SS') AS requested_at FROM request " \
+    query = "SELECT " \
+            "request.*, " \
+            "to_char(requested_at AT TIME ZONE %s, 'YYYY Mon DD HH24:MI:SS') AS requested_at, " \
+            "pg_timezone_names.abbrev AS tz_abbrev " \
+            "FROM request " \
             "INNER JOIN pg_timezone_names ON %s = pg_timezone_names.name " \
             "WHERE printed = false ORDER BY request.requested_at"
     data = (time_zone, time_zone)
