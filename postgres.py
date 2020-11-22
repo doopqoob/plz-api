@@ -533,7 +533,7 @@ def get_unprinted_tickets(time_zone):
 
     query = "SELECT " \
             "request.*, " \
-            "to_char(requested_at AT TIME ZONE %s, 'YYYY Mon DD HH24:MI:SS') AS requested_at, " \
+            "to_char(requested_at AT TIME ZONE %s, 'YYYY-MM-DD HH24:MI:SS') AS requested_at, " \
             "pg_timezone_names.abbrev AS tz_abbrev " \
             "FROM request " \
             "INNER JOIN pg_timezone_names ON %s = pg_timezone_names.name " \
