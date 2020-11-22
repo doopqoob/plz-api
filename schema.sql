@@ -68,20 +68,26 @@ CREATE OR REPLACE VIEW artist_appearance_count AS
     ORDER BY artist_name;
 
 CREATE OR REPLACE VIEW request AS
-    SELECT ticket_id,
+    SELECT freeform_request.ticket_id,
            'freeform' as type,
            artist_name,
            song_title,
            null as song_tempo,
-           null as key
+           null as song_key,
+           requested_by,
+           notes
     FROM freeform_request
+    INNER JOIN ticket on freeform_request.ticket_id = ticket.ticket_id
 UNION
-    SELECT ticket_id,
+    SELECT selected_request.ticket_id,
            'selected' as type,
            artist_name,
            song_title,
            song_tempo,
-           song_key
+           song_key,
+           requested_by,
+           notes
     FROM selected_request
         INNER JOIN song ON selected_request.song_id = song.song_id
-        INNER JOIN artist ON song.artist_id = artist.artist_id;
+        INNER JOIN artist ON song.artist_id = artist.artist_id
+        INNER JOIN ticket on selected_request.ticket_id = ticket.ticket_id;
