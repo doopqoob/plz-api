@@ -532,7 +532,7 @@ def get_unprinted_tickets(time_zone):
     """Gets unprinted tickets"""
 
     query = "SELECT * FROM request WHERE printed = false ORDER BY requested_at"
-    rows = select(query, real_dict_cursor=True)
+    rows = select(query, real_dict_cursor=True, time_zone=time_zone)
 
     if len(rows) == 0:
         return None
