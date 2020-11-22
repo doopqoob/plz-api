@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS song (
 
 CREATE TABLE IF NOT EXISTS ticket (
     ticket_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    show_id int NOT NULL,
     requested_at timestamptz NOT NULL DEFAULT now(),
     requested_by text NOT NULL,
     ip_address inet NOT NULL,
@@ -71,6 +72,7 @@ CREATE OR REPLACE VIEW request AS
     SELECT freeform_request.ticket_id,
            'freeform' as type,
            requested_at,
+           show_name,
            artist_name,
            song_title,
            null as song_tempo,
@@ -81,11 +83,13 @@ CREATE OR REPLACE VIEW request AS
            reverse_dns,
            printed
     FROM freeform_request
-    INNER JOIN ticket on freeform_request.ticket_id = ticket.ticket_id
+    INNER JOIN ticket ON freeform_request.ticket_id = ticket.ticket_id
+    INNER JOIN show ON ticket.show_id = show.show_id
 UNION
     SELECT selected_request.ticket_id,
            'selected' as type,
            requested_at,
+           show_name,
            artist_name,
            song_title,
            song_tempo,
@@ -98,4 +102,5 @@ UNION
     FROM selected_request
         INNER JOIN song ON selected_request.song_id = song.song_id
         INNER JOIN artist ON song.artist_id = artist.artist_id
-        INNER JOIN ticket on selected_request.ticket_id = ticket.ticket_id;
+        INNER JOIN ticket ON selected_request.ticket_id = ticket.ticket_id
+        INNER JOIN show ON ticket.show_id = show.show_id;

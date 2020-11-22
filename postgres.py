@@ -398,7 +398,7 @@ def add_selected_request(form_data, ip_address):
     # Validate input and add to database
     if 'show_id' in form_data:
         try:
-            song_id = UUID(form_data['song_id'])
+            show_id = int(form_data['show_id'])
         except ValueError as e:
             print(e)
             return False
@@ -430,8 +430,8 @@ def add_selected_request(form_data, ip_address):
     else:
         reverse_dns = None
 
-    query = "INSERT INTO ticket (requested_by, ip_address, reverse_dns, notes) VALUES (%s, %s, %s, %s) RETURNING ticket_id"
-    data = (submitted_by, ip_address, reverse_dns, notes)
+    query = "INSERT INTO ticket (show_id, requested_by, ip_address, reverse_dns, notes) VALUES (%s, %s, %s, %s, %s) RETURNING ticket_id"
+    data = (show_id, submitted_by, ip_address, reverse_dns, notes)
 
     ticket_id = insert(query, data, return_inserted_row_id=True)
 
