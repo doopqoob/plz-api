@@ -459,3 +459,19 @@ def get_unprinted_tickets():
         return None
 
     return rows
+
+
+def mark_ticket_as_printed(ticket_id):
+    """Marks a ticket as printed"""
+    try:
+        ticket_id = UUID(ticket_id)
+    except ValueError as e:
+        print(e)
+        return False
+
+    query = "UPDATE ticket SET printed = true WHERE ticket_id = %s"
+    data = (ticket_id,)
+
+    result = insert(query, data)
+
+    return result

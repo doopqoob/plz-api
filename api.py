@@ -189,3 +189,18 @@ def download_unprinted_tickets():
 
     message = {"tickets": ticket_list}
     return message, 200
+
+
+@app.route('/api/v2/mark_ticket_printed')
+@auth.login_required
+def mark_ticket_printed():
+    if request.args.get('ticket_id') is None:
+        message = {"message": "No ticket ID given"}
+        return message, 400
+
+    result = postgres.mark_ticket_as_printed(request.args.get('ticket_id'))
+
+    if result:
+        return {"message": "success!"}, 200
+    else:
+        return {"message": "something went wrong!"}, 500

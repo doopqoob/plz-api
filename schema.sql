@@ -70,6 +70,7 @@ CREATE OR REPLACE VIEW artist_appearance_count AS
 CREATE OR REPLACE VIEW request AS
     SELECT freeform_request.ticket_id,
            'freeform' as type,
+           requested_at,
            artist_name,
            song_title,
            null as song_tempo,
@@ -84,6 +85,7 @@ CREATE OR REPLACE VIEW request AS
 UNION
     SELECT selected_request.ticket_id,
            'selected' as type,
+           requested_at,
            artist_name,
            song_title,
            song_tempo,
