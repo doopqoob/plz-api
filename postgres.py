@@ -624,7 +624,7 @@ def get_unprinted_tickets(time_zone):
 
 
 def get_ticket(ticket_id, time_zone):
-    """Gets a specific ticket by ID number"""
+    """Gets a specific ticket by ID number, given in terms of time_zone."""
     try:
         ticket_id = UUID(ticket_id)
     except ValueError as e:
@@ -642,7 +642,33 @@ def get_ticket(ticket_id, time_zone):
     result = select(query, data, real_dict_cursor=True)
 
     if result:
-        return result
+        return result[0]
+    else:
+        return None
+
+
+def get_tickets(time_zone, time_interval=None):
+    """
+    Gets all tickets, given in terms of time_zone.
+    If time_interval is given, tickets between then and now are retrieved.
+    """
+
+    query = "SELECT " \
+            "request.*, " \
+            "to_char(requested_at AT TIME ZONE %s, 'YYYY-MM-DD HH24:MI:SS') AS requested_at, " \
+            "pg_timezone_names.abbrev AS tz_abbrev " \
+            "FROM request " \
+            "INNER JOIN pg_timezone_names ON %s = pg_timezone_names.name "
+    data = (time_zone, time_zone)
+
+    if time_interval is not None:
+        query += "WHERE requested_at >= (now() - INTERVAL %s)"
+        data = (time_zone, time_zone, time_interval)
+
+    result = select(query, data, real_dict_cursor=True)
+
+    if result:
+        return result[0]
     else:
         return None
 

@@ -255,6 +255,25 @@ def download_ticket():
     return message, 200
 
 
+@app.route('/api/v2/download_tickets')
+@auth.login_required
+def download_tickets():
+    """Download all tickets"""
+    time_zone = request.args.get('time_zone')
+
+    if time_zone is None:
+        time_zone = "Etc/UTC"
+
+    time_interval = request.args.get('time_interval')
+    tickets = postgres.get_tickets(time_zone, time_interval)
+
+    if tickets is None:
+        return {"message": "No tickets in DB matching selected criteria!"}, 404
+
+    message = {"tickets": tickets}
+    return message, 200
+
+
 @app.route('/api/v2/mark_ticket_printed')
 @auth.login_required
 def mark_ticket_printed():
