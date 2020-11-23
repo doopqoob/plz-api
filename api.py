@@ -37,7 +37,7 @@ def new_api_key():
         message = {"message": "Something went wrong getting an API key"}
         return message, 500
 
-    return credentials, 200
+    return {"credentials": credentials}, 200
 
 @app.route('/api/v2/add_song', methods=['POST'])
 @auth.login_required

@@ -146,14 +146,24 @@ def select(query, data=None, real_dict_cursor=False, time_zone=None):
     return rows
 
 
+def get_reverse_dns(ip_address):
+    """Gets reverse DNS, if available"""
+    try:
+        reverse_dns = socket.gethostbyaddr(ip_address)
+    except socket.herror as error:
+        print(error)
+        return None
+
+    if reverse_dns:
+        return reverse_dns
+    else:
+        return None
+
+
 def add_to_blocklist(ip_address, notes):
     """Adds IP address to blocklist for ever and ever"""
 
-    reverse_dns = socket.gethostbyaddr(ip_address)
-    if reverse_dns:
-        reverse_dns = reverse_dns[0]
-    else:
-        reverse_dns = None
+    reverse_dns = get_reverse_dns(ip_address)
 
     query = "INSERT INTO blocklist (ip_address, reverse_dns, notes) VALUES (%s, %s, %s)"
     data = (ip_address, reverse_dns, notes)
@@ -506,11 +516,7 @@ def add_selected_request(form_data, ip_address):
     else:
         notes = None
 
-    reverse_dns = socket.gethostbyaddr(ip_address)
-    if reverse_dns:
-        reverse_dns = reverse_dns[0]
-    else:
-        reverse_dns = None
+    reverse_dns = get_reverse_dns(ip_address)
 
     query = "INSERT INTO ticket (show_id, requested_by, ip_address, reverse_dns, notes) VALUES (%s, %s, %s, %s, %s) RETURNING ticket_id"
     data = (show_id, submitted_by, ip_address, reverse_dns, notes)
@@ -577,11 +583,7 @@ def add_freeform_request(form_data, ip_address):
     else:
         notes = None
 
-    reverse_dns = socket.gethostbyaddr(ip_address)
-    if reverse_dns:
-        reverse_dns = reverse_dns[0]
-    else:
-        reverse_dns = None
+    reverse_dns = get_reverse_dns(ip_address)
 
     query = "INSERT INTO ticket (show_id, requested_by, ip_address, reverse_dns, notes) VALUES (%s, %s, %s, %s, %s) RETURNING ticket_id"
     data = (show_id, submitted_by, ip_address, reverse_dns, notes)

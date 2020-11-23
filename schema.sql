@@ -3,6 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE IF NOT EXISTS credential (
     credential_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     password_hash text NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now(),
     active bool DEFAULT false
 );
 
