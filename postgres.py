@@ -668,7 +668,7 @@ def get_tickets(time_zone, time_interval=None):
     result = select(query, data, real_dict_cursor=True)
 
     if result:
-        return result[0]
+        return result
     else:
         return None
 
