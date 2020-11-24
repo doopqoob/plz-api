@@ -659,13 +659,13 @@ def get_tickets(time_zone, time_interval=None):
             "request.*, " \
             "to_char(requested_at AT TIME ZONE %s, 'YYYY-MM-DD HH24:MI:SS') AS requested_at, " \
             "pg_timezone_names.abbrev AS tz_abbrev " \
-            "FROM request "
+            "FROM request " \
+            "INNER JOIN pg_timezone_names ON %s = pg_timezone_names.name "
 
     if time_interval is not None:
         query += "WHERE requested_at >= (now() - INTERVAL %s) "
 
-    query += "INNER JOIN pg_timezone_names ON %s = pg_timezone_names.name " \
-            "ORDER BY request.requested_at DESC "
+    query += "ORDER BY request.requested_at DESC"
     data = (time_zone, time_zone)
 
     if time_interval is not None:
