@@ -669,7 +669,7 @@ def get_tickets(time_zone, time_interval=None):
     data = (time_zone, time_zone)
 
     if time_interval is not None:
-        data = (time_zone, time_interval, time_zone)
+        data = (time_zone, time_zone, time_interval)
 
     result = select(query, data, real_dict_cursor=True)
 
