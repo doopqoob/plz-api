@@ -661,7 +661,7 @@ def get_tickets(time_zone, time_interval=None):
             "pg_timezone_names.abbrev AS tz_abbrev " \
             "FROM request " \
             "INNER JOIN pg_timezone_names ON %s = pg_timezone_names.name " \
-            "ORDER BY request.requested_at DESC"
+            "ORDER BY request.requested_at DESC "
     data = (time_zone, time_zone)
 
     if time_interval is not None:
