@@ -5,6 +5,7 @@ from flask import Flask
 from flask import request
 from flask_httpauth import HTTPBasicAuth
 from uuid import UUID
+from urllib.parse import unquote
 
 from dotenv import load_dotenv
 
@@ -15,6 +16,7 @@ auth = HTTPBasicAuth()
 @app.before_first_request
 def init_db():
     postgres.init_db()
+
 
 @auth.verify_password
 def verify_password(credential_id, secret):
@@ -38,6 +40,7 @@ def new_api_key():
         return message, 500
 
     return {"credentials": credentials}, 200
+
 
 @app.route('/api/v2/add_song', methods=['POST'])
 @auth.login_required
@@ -224,6 +227,11 @@ def download_unprinted_tickets():
     """Download unprinted tickets"""
     time_zone = request.args.get('time_zone')
 
+    if time_zone is None:
+        time_zone = "Etc/UTC"
+    else:
+        time_zone = unquote(time_zone)
+
     ticket_list = postgres.get_unprinted_tickets(time_zone)
 
     if ticket_list is None:
@@ -245,6 +253,8 @@ def download_ticket():
 
     if time_zone is None:
         time_zone = "Etc/UTC"
+    else:
+        time_zone = unquote(time_zone)
 
     ticket = postgres.get_ticket(ticket_id, time_zone)
 
@@ -263,6 +273,8 @@ def download_tickets():
 
     if time_zone is None:
         time_zone = "Etc/UTC"
+    else:
+        time_zone = unquote(time_zone)
 
     time_interval = request.args.get('time_interval')
 
