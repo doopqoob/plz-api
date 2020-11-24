@@ -649,12 +649,13 @@ def get_ticket(ticket_id, time_zone):
         return None
 
 
-def get_tickets(time_zone, time_interval=None):
+def get_tickets(time_zone, time_interval=None, show=None):
     """
     Gets all tickets, given in terms of time_zone.
     If time_interval is given, tickets between then and now are retrieved.
     """
 
+    # Build the query
     query = "SELECT " \
             "request.*, " \
             "to_char(requested_at AT TIME ZONE %s, 'YYYY-MM-DD HH24:MI:SS') AS requested_at, " \
@@ -662,15 +663,34 @@ def get_tickets(time_zone, time_interval=None):
             "FROM request " \
             "INNER JOIN pg_timezone_names ON %s = pg_timezone_names.name "
 
+    if time_interval is not None or show is not None:
+            query += "WHERE "
+
     if time_interval is not None:
-        query += "WHERE requested_at >= (now() - INTERVAL %s) "
+        query += "requested_at >= (now() - INTERVAL %s) "
+
+    if time_interval is not None and show is not None:
+        query += "AND "
+
+    if show is not None:
+        query += "show_name = %s "
 
     query += "ORDER BY request.requested_at DESC"
-    data = (time_zone, time_zone)
+    data = None
 
-    if time_interval is not None:
+    if time_interval is None and show is None:
+        data = (time_zone, time_zone)
+
+    elif time_interval is not None and show is None:
         data = (time_zone, time_zone, time_interval)
 
+    elif time_interval is None and show is not None:
+        data = (time_zone, time_zone, show)
+
+    elif time_interval is not None and show is not None:
+        data = (time_zone, time_zone, time_interval, show)
+
+    # run the query
     result = select(query, data, real_dict_cursor=True)
 
     if result:
