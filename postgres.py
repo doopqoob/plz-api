@@ -155,7 +155,7 @@ def get_reverse_dns(ip_address):
         return None
 
     if reverse_dns:
-        return reverse_dns
+        return reverse_dns[0]
     else:
         return None
 
