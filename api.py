@@ -312,6 +312,11 @@ def block_ip():
     else:
         notes = form_data['notes']
 
+    result = postgres.is_blocked(form_data['ip_address'])
+
+    if result:
+        return {"message": "Address is already blocklisted!"}, 200
+
     result = postgres.add_to_blocklist(form_data['ip_address'], notes)
 
     if result:
