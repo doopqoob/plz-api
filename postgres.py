@@ -684,8 +684,8 @@ def get_tickets(time_zone, time_interval=None, show_id=None, ip_address=None, us
 
     if filters is not []:
         filters_string = "AND "
-        filters_string = filters_string.join(filters)
-        query += "WHERE " + filters_string
+        query += "WHERE " + filters_string.join(filters)
+        print(query)
 
     query += "ORDER BY request.requested_at DESC"
     data = tuple(data)
