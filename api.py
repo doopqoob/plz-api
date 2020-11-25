@@ -282,7 +282,14 @@ def download_tickets():
     if request.args.get('show_id'):
         show_id = int(request.args.get('show_id'))
 
-    tickets = postgres.get_tickets(time_zone, time_interval=time_interval, show_id=show_id)
+    ip_address = request.args.get('ip_address')
+    user_name = request.args.get('user_name')
+
+    tickets = postgres.get_tickets(time_zone=time_zone,
+                                   time_interval=time_interval,
+                                   show_id=show_id,
+                                   ip_address=ip_address,
+                                   user_name=user_name)
 
     if tickets is None:
         return {"message": "No tickets in DB matching selected criteria!"}, 404

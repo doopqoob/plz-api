@@ -649,7 +649,7 @@ def get_ticket(ticket_id, time_zone):
         return None
 
 
-def get_tickets(time_zone, time_interval=None, show_id=None):
+def get_tickets(time_zone, time_interval=None, show_id=None, ip_address=None, user_name=None):
     """
     Gets all tickets, given in terms of time_zone.
     If time_interval is given, tickets between then and now are retrieved.
@@ -663,32 +663,32 @@ def get_tickets(time_zone, time_interval=None, show_id=None):
             "FROM request " \
             "INNER JOIN pg_timezone_names ON %s = pg_timezone_names.name "
 
-    if time_interval is not None or show_id is not None:
-            query += "WHERE "
+    filters = []
+    data = [time_zone, time_zone]
 
     if time_interval is not None:
-        query += "requested_at >= (now() - INTERVAL %s) "
-
-    if time_interval is not None and show_id is not None:
-        query += "AND "
+        filters.append("requested_at >= (now() - INTERVAL %s) ")
+        data.append(time_interval)
 
     if show_id is not None:
-        query += "show_id = %s "
+        filters.append("show_id = %s ")
+        data.append(show_id)
+
+    if ip_address is not None:
+        filters.append("ip_address = %s ")
+        data.append(ip_address)
+
+    if user_name is not None:
+        filters.append("requested_by = %s ")
+        data.append(user_name)
+
+    if filters is not []:
+        filters_string = "AND "
+        filters_string = filters_string.join(filters)
+        query += "WHERE " + filters_string
 
     query += "ORDER BY request.requested_at DESC"
-    data = None
-
-    if time_interval is None and show_id is None:
-        data = (time_zone, time_zone)
-
-    elif time_interval is not None and show_id is None:
-        data = (time_zone, time_zone, time_interval)
-
-    elif time_interval is None and show_id is not None:
-        data = (time_zone, time_zone, show_id)
-
-    elif time_interval is not None and show_id is not None:
-        data = (time_zone, time_zone, time_interval, show_id)
+    data = tuple(data)
 
     # run the query
     result = select(query, data, real_dict_cursor=True)
