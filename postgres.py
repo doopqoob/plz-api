@@ -341,9 +341,12 @@ def get_time_zones():
     rows = select(query)
 
     if rows:
-        return rows
+        timezones = []
+        for row in rows:
+            timezones.append(row[0])
+        return timezones
     else:
-        print("No time zone names on the database?????? Something is seriously wrong.")
+        print("No time zone names in the database?????? Something is seriously wrong.")
         return None
 
 
