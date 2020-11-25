@@ -335,6 +335,19 @@ def get_shows():
         return None
 
 
+def get_time_zones():
+    """Get a list of all time zones from the database"""
+    query = "SELECT name FROM pg_timezone_names ORDER BY name"
+    rows = select(query)
+
+    if rows:
+        return rows
+    else:
+        print("No time zone names on the database?????? Something is seriously wrong.")
+        return None
+
+
+
 def get_crates(show_id=None):
     """Gets a list of crates associated with a show. If no show is given, gets all crates."""
     if isinstance(show_id, int):
@@ -682,7 +695,7 @@ def get_tickets(time_zone, time_interval=None, show_id=None, ip_address=None, us
         filters.append("requested_by = %s ")
         data.append(user_name)
 
-    if filters is not []:
+    if filters:
         filters_string = "AND "
         query += "WHERE " + filters_string.join(filters)
         print(query)

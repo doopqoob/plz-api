@@ -86,6 +86,19 @@ def get_shows():
     return message, 200
 
 
+@app.route('/api/v2/get_time_zones')
+@auth.login_required()
+def get_time_zones():
+    """Get a list of all time zones"""
+    time_zones = postgres.get_time_zones()
+
+    if not time_zones:
+        message = {"message": "Something is seriously wrong. No time zones were returned from the DB!"}
+        return message, 500
+
+    message = {"time_zones": time_zones}
+    return message, 200
+
 @app.route('/api/v2/get_crates')
 def get_crates():
     """Get a list of all crates associated with a show"""
