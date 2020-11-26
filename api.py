@@ -137,7 +137,7 @@ def associate_crates():
 
 @app.route('/api/v2/disassociate_crates', methods=['POST'])
 @auth.login_required
-def associate_crates():
+def disassociate_crates():
     """Disssociate a show from one or more crates. Any number of crates can be shared by any number of shows."""
     association = request.get_json()
 
