@@ -350,7 +350,6 @@ def get_time_zones():
         return None
 
 
-
 def get_crates(show_id=None):
     """Gets a list of crates associated with a show. If no show is given, gets all crates."""
     if isinstance(show_id, int):
@@ -382,6 +381,21 @@ def associate_crates(show_id, crate_ids):
 
     return True
 
+
+def disassociate_crates(show_id, crate_ids):
+    """Disassociate any number of crates from a show."""
+    query = "DELETE FROM show_crate WHERE show_id = %s AND crate_id = %s"
+
+    if crate_ids is not type(list):
+        return False
+
+    for crate_id in crate_ids:
+        data = (show_id, crate_id)
+        result = insert(query, data)
+        if result is not True:
+            return False
+
+    return True
 
 def create_artist(artist_name):
     """Creates a new crate in which to file songs"""

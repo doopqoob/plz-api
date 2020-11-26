@@ -135,6 +135,25 @@ def associate_crates():
     return 500
 
 
+@app.route('/api/v2/disassociate_crates', methods=['POST'])
+@auth.login_required
+def associate_crates():
+    """Disssociate a show from one or more crates. Any number of crates can be shared by any number of shows."""
+    association = request.get_json()
+
+    result = postgres.disassociate_crates(association['show_id'],association['crate_ids'])
+
+    if result is False:
+        message = {"message": "Something went wrong disassociating your crates"}
+        return message, 500
+
+    if result is True:
+        message = {"message": "Crates associated successfully!"}
+        return message, 201
+
+    return 500
+
+
 @app.route('/api/v2/get_show_artists')
 def get_show_artists():
     """Get all artists in the DB for a given show"""
