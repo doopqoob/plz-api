@@ -148,7 +148,7 @@ def disassociate_crates():
         return message, 500
 
     if result is True:
-        message = {"message": "Crates associated successfully!"}
+        message = {"message": "Crates disassociated successfully!"}
         return message, 201
 
     return 500

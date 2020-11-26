@@ -370,7 +370,7 @@ def associate_crates(show_id, crate_ids):
     """Associate any number of crates with a show."""
     query = "INSERT INTO show_crate (show_id, crate_id) VALUES (%s, %s)"
 
-    if crate_ids is not type(list):
+    if not isinstance(crate_ids, list):
         return False
 
     for crate_id in crate_ids:
@@ -386,7 +386,7 @@ def disassociate_crates(show_id, crate_ids):
     """Disassociate any number of crates from a show."""
     query = "DELETE FROM show_crate WHERE show_id = %s AND crate_id = %s"
 
-    if crate_ids is not type(list):
+    if not isinstance(crate_ids, list):
         return False
 
     for crate_id in crate_ids:
